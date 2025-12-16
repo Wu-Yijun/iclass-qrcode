@@ -28,9 +28,9 @@ export const encodeShareData = (items: SavedItem[]): string => {
     const json = JSON.stringify({ items });
     // Handle Unicode strings
     return btoa(encodeURIComponent(json).replace(/%([0-9A-F]{2})/g,
-        function toSolidBytes(match, p1) {
-            return String.fromCharCode(parseInt(p1, 16));
-        }));
+      function toSolidBytes(match, p1) {
+        return String.fromCharCode(parseInt(p1, 16));
+      }));
   } catch (e) {
     console.error('Encode failed', e);
     return '';
@@ -39,11 +39,19 @@ export const encodeShareData = (items: SavedItem[]): string => {
 
 export const decodeShareData = (str: string): SavedItem[] => {
   try {
-    const decoded = decodeURIComponent(atob(str).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    const decoded = decodeURIComponent(atob(str).split('').map(function (c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
     const data: ShareData = JSON.parse(decoded);
-    return Array.isArray(data.items) ? data.items : [];
+    if (!Array.isArray(data.items)) return [];
+    data.items.forEach(item => {
+      if (typeof item.id !== 'string' || typeof item.label !== 'string' || typeof item.timestamp !== 'number') {
+        throw new Error('Invalid item format');
+      }
+      item.id = item.id.replaceAll(/[^0-9]/g, "");
+      item.label = item.label.trim();
+    });
+    return data.items.filter(item => item.id !== "" && item.label !== "");
   } catch (e) {
     console.error('Decode failed', e);
     return [];

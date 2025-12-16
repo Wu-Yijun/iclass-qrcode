@@ -9,7 +9,8 @@ import { useWindowDimensions } from './components/useWindowDimensions';
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('MAIN');
-  const [currentId, setCurrentId] = useState<string>('');
+  const [currentId, setCurrentId_raw] = useState<string>('');
+  const setCurrentId = (id: string) => setCurrentId_raw(id.replaceAll(/[^0-9]/g, ""));
   const [items, setItems] = useState<SavedItem[]>([]);
   const [tempLabel, setTempLabel] = useState('');
   const [showSavePrompt, setShowSavePrompt] = useState(false);
@@ -17,6 +18,8 @@ const App: React.FC = () => {
 
   const [availableQrSize, setAvailableQrSize] = useState(220);
   const qrCodeRef = useRef<HTMLDivElement>(null);
+
+
 
   useEffect(() => {
     const loaded = loadFromLocalStorage();
@@ -164,7 +167,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Main Layout Container */}
-      <div className="flex flex-col w-full max-w-md wide:max-w-none wide:flex wide:flex-row wide:justify-center wide:h-screen wide:pt-16 wide:px-8 wide:gap-8 flex-1">
+      <div className="flex flex-col w-full max-w-md wide:max-w-none wide:flex wide:flex-row wide:justify-center wide:h-screen wide:pt-16 wide:px-8 wide:gap-12 flex-1">
 
         {/* Left Column: Inputs & Tags */}
         <div className="flex flex-col flex-1 w-full wide:w-1/2 wide:max-w-sm wide:py-4 px-4 wide:px-0 wide:justify-center">
@@ -173,7 +176,7 @@ const App: React.FC = () => {
           <div className="mb-6">
             <div className="relative group">
               <input
-                type="number" min="0" step="1"
+                type="text" inputMode="numeric" pattern="[0-9]*"
                 value={currentId}
                 onChange={handleManualIdChange}
                 placeholder="Enter Course ID"

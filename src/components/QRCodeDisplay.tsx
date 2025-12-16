@@ -95,14 +95,7 @@ export const QRCodeMinimal: React.FC<CommonProps & {  size: number }> = ({ id,  
          <QRCodeCanvas
             value={currentUrl} 
             size={size}
-            level={'H'} 
-            includeMargin={true}
-            imageSettings={{
-              src: "", 
-              height: 24,
-              width: 24,
-              excavate: true,
-            }}
+            level={'H'}
          />
       </div>
 
