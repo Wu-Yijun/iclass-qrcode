@@ -8,4 +8,4 @@ export interface ShareData {
   items: SavedItem[];
 }
 
-export type ViewState = 'MAIN' | 'EDIT';
+export type ViewState = "MAIN" | "EDIT";

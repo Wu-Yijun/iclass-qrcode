@@ -1,65 +1,77 @@
-import React, { useState, useEffect, useRef } from 'react';
-import QRCodeCard, { QRCodeOnly, SaveActions } from './components/QRCodeDisplay';
-import EditView from './components/EditView';
-import TagList from './components/TagList';
-import { SavedItem, ViewState } from './types';
-import { saveToLocalStorage, loadFromLocalStorage, scanQRCodeFromFile, decodeShareData } from './utils';
-import { Settings, Upload, Link, Save, QrCode } from 'lucide-react';
-import { useWindowDimensions } from './components/useWindowDimensions';
+import React, { useEffect, useRef, useState } from "react";
+import QRCodeCard, {
+  QRCodeOnly,
+  SaveActions,
+} from "./components/QRCodeDisplay";
+import EditView from "./components/EditView";
+import TagList from "./components/TagList";
+import { SavedItem, ViewState } from "./types";
+import {
+  decodeShareData,
+  loadFromLocalStorage,
+  saveToLocalStorage,
+  scanQRCodeFromFile,
+} from "./utils";
+import { Languages, Link, QrCode, Save, Settings, Upload } from "lucide-react";
+import { useLanguage } from "./contexts/LanguageContext";
 
 const App: React.FC = () => {
-  const [view, setView] = useState<ViewState>('MAIN');
-  const [currentId, setCurrentId_raw] = useState<string>('');
-  const setCurrentId = (id: string) => setCurrentId_raw(id.replaceAll(/[^0-9]/g, ""));
+  const [view, setView] = useState<ViewState>("MAIN");
+  const [currentId, setCurrentId_raw] = useState<string>("");
+  const setCurrentId = (id: string) =>
+    setCurrentId_raw(id.replaceAll(/[^0-9]/g, ""));
   const [items, setItems] = useState<SavedItem[]>([]);
-  const [tempLabel, setTempLabel] = useState('');
+  const [tempLabel, setTempLabel] = useState("");
   const [showSavePrompt, setShowSavePrompt] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [availableQrSize, setAvailableQrSize] = useState(220);
   const qrCodeRef = useRef<HTMLDivElement>(null);
 
-
+  const { t, language, setLanguage } = useLanguage();
 
   useEffect(() => {
     const loaded = loadFromLocalStorage();
     setItems(loaded);
 
     const params = new URLSearchParams(window.location.search);
-    const idParam = params.get('id');
-    const shareParam = params.get('share');
+    const idParam = params.get("id");
+    const shareParam = params.get("share");
 
     if (shareParam) {
       const sharedItems = decodeShareData(shareParam);
       if (sharedItems.length > 0) {
         const merged = [...loaded];
-        sharedItems.forEach(shareItem => {
-          if (!merged.find(m => m.id === shareItem.id)) {
+        sharedItems.forEach((shareItem) => {
+          if (!merged.find((m) => m.id === shareItem.id)) {
             merged.push(shareItem);
           }
         });
         setItems(merged);
         saveToLocalStorage(merged);
-        window.history.replaceState({}, '', window.location.pathname);
+        window.history.replaceState({}, "", window.location.pathname);
         alert(`Imported ${sharedItems.length} tags successfully.`);
       }
     }
 
-
     const handleResize = () => {
       if (qrCodeRef.current !== null) {
-        const min = Math.min(qrCodeRef.current.clientHeight, qrCodeRef.current.clientWidth, 400);
+        const min = Math.min(
+          qrCodeRef.current.clientHeight,
+          qrCodeRef.current.clientWidth,
+          400,
+        );
         setAvailableQrSize(Math.max(100, min - 10));
       }
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     handleResize();
 
     if (idParam) {
       setCurrentId(idParam);
     }
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -93,10 +105,10 @@ const App: React.FC = () => {
       if (id) {
         setCurrentId(id);
       } else {
-        alert('Could not decode QR code.');
+        alert("Could not decode QR code.");
       }
     }
-    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const triggerFileUpload = () => {
@@ -105,17 +117,21 @@ const App: React.FC = () => {
 
   const saveCurrentId = () => {
     if (!currentId) return;
-    if (!items.find(i => i.id === currentId)) {
-      setTempLabel('');
+    if (!items.find((i) => i.id === currentId)) {
+      setTempLabel("");
       setShowSavePrompt(true);
     } else {
-      alert('ID already saved.');
+      alert("ID already saved.");
     }
   };
 
   const confirmSave = () => {
     if (!tempLabel) return;
-    const newItem: SavedItem = { id: currentId, label: tempLabel, timestamp: Date.now() };
+    const newItem: SavedItem = {
+      id: currentId,
+      label: tempLabel,
+      timestamp: Date.now(),
+    };
     const updated = [...items, newItem];
     handleUpdateItems(updated);
     setShowSavePrompt(false);
@@ -123,19 +139,20 @@ const App: React.FC = () => {
 
   const shareCurrentId = () => {
     if (!currentId) return;
-    const url = `${window.location.origin}${window.location.pathname}?id=${currentId}`;
+    const url =
+      `${window.location.origin}${window.location.pathname}?id=${currentId}`;
     navigator.clipboard.writeText(url).then(() => {
-      alert('Link copied to clipboard!');
+      alert("Link copied to clipboard!");
     });
   };
 
-  if (view === 'EDIT') {
+  if (view === "EDIT") {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <EditView
           items={items}
           onUpdate={handleUpdateItems}
-          onBack={() => setView('MAIN')}
+          onBack={() => setView("MAIN")}
         />
       </div>
     );
@@ -143,7 +160,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col items-center overflow-x-hidden">
-
       {/* Header - Fixed in Wide Mode */}
       <div className="w-full wide:fixed wide:top-0 wide:z-20 wide:bg-gray-50/90 wide:backdrop-blur-sm wide:border-b wide:border-gray-200">
         <header className="w-full max-w-md wide:max-w-7xl mx-auto flex justify-between items-center px-4 py-4 wide:py-2 wide:justify-center relative">
@@ -152,31 +168,44 @@ const App: React.FC = () => {
               <QrCode size={20} />
             </div>
             <div>
-              <h1 className="text-lg lg:text-xl font-bold leading-tight">iClass QR</h1>
-              <p className="text-[10px] lg:text-xs text-gray-500 uppercase tracking-wide">Sign-in Helper</p>
+              <h1 className="text-lg lg:text-xl font-bold leading-tight">
+                {t("app_title")}
+              </h1>
+              <p className="text-[10px] lg:text-xs text-gray-500 uppercase tracking-wide">
+                {t("app_sub_title")}
+              </p>
             </div>
           </div>
           {/* Settings button absolute right in wide mode */}
-          <button
-            onClick={() => setView('EDIT')}
-            className="p-2 bg-white text-gray-600 rounded-lg hover:bg-gray-100 border border-gray-200 shadow-sm transition-all active:scale-95 wide:absolute wide:right-4"
-          >
-            <Settings size={18} />
-          </button>
+          <div className="wide:absolute wide:right-4 flex flex-row gap-2">
+            <button
+              onClick={() => setLanguage(language === "en" ? "zh" : "en")}
+              className="p-2 bg-white text-gray-600 rounded-lg hover:bg-gray-100 border border-gray-200 shadow-sm transition-all active:scale-95"
+            >
+              <Languages size={18} />
+            </button>
+            {/* Settings button absolute right in wide mode */}
+            <button
+              onClick={() => setView("EDIT")}
+              className="p-2 bg-white text-gray-600 rounded-lg hover:bg-gray-100 border border-gray-200 shadow-sm transition-all active:scale-95"
+            >
+              <Settings size={18} />
+            </button>
+          </div>
         </header>
       </div>
 
       {/* Main Layout Container */}
       <div className="flex flex-col w-full max-w-md wide:max-w-none wide:flex wide:flex-row wide:justify-center wide:h-screen wide:pt-16 wide:px-8 wide:gap-12 flex-1">
-
         {/* Left Column: Inputs & Tags */}
         <div className="flex flex-col flex-1 w-full wide:w-1/2 wide:max-w-sm wide:py-4 px-4 wide:px-0 wide:justify-center">
-
           {/* Inputs */}
           <div className="mb-6">
             <div className="relative group">
               <input
-                type="text" inputMode="numeric" pattern="[0-9]*"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 value={currentId}
                 onChange={handleManualIdChange}
                 placeholder="Enter Course ID"
@@ -204,7 +233,8 @@ const App: React.FC = () => {
 
             {/* Quick Actions Bar */}
             <div className="flex justify-between items-center">
-              {currentId && !items.find(i => i.id === currentId) && !showSavePrompt && (
+              {currentId && !items.find((i) => i.id === currentId) &&
+                !showSavePrompt && (
                 <button
                   onClick={saveCurrentId}
                   className="text-xs font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1 bg-brand-50 px-2.5 py-1 rounded-full transition-colors"
@@ -231,9 +261,12 @@ const App: React.FC = () => {
                   value={tempLabel}
                   onChange={(e) => setTempLabel(e.target.value)}
                   className="flex-1 text-sm outline-none border-none p-1"
-                  onKeyDown={(e) => e.key === 'Enter' && confirmSave()}
+                  onKeyDown={(e) => e.key === "Enter" && confirmSave()}
                 />
-                <button onClick={confirmSave} className="bg-brand-600 text-white p-1 rounded-md hover:bg-brand-700">
+                <button
+                  onClick={confirmSave}
+                  className="bg-brand-600 text-white p-1 rounded-md hover:bg-brand-700"
+                >
                   <Save size={16} />
                 </button>
               </div>
@@ -251,14 +284,14 @@ const App: React.FC = () => {
 
           {/* --- Mobile Only: Combined QR Card --- */}
           <div className="wide:hidden">
-            {currentId ? (
-              <QRCodeCard id={currentId} />
-            ) : (
-              <div className="flex-1 flex flex-col items-center justify-center text-gray-400 opacity-50 mb-12 py-12">
-                <QrCode size={64} className="mb-4 text-gray-300" />
-                <p className="text-sm">Enter an ID to generate</p>
-              </div>
-            )}
+            {currentId
+              ? <QRCodeCard id={currentId} />
+              : (
+                <div className="flex-1 flex flex-col items-center justify-center text-gray-400 opacity-50 mb-12 py-12">
+                  <QrCode size={64} className="mb-4 text-gray-300" />
+                  <p className="text-sm">Enter an ID to generate</p>
+                </div>
+              )}
           </div>
 
           {/* --- Wide Mode Only: Save Actions Sunk to Bottom --- */}
@@ -270,19 +303,26 @@ const App: React.FC = () => {
         </div>
 
         {/* --- Wide Mode Only: Right Column QR Display --- */}
-        <div ref={qrCodeRef} className="hidden my-10 wide:flex wide:w-2/5 wide:items-center wide:justify-center">
-          {currentId ? (
-            <div className="h-0">
-              <div className='translate-y-[-50%]'>
-                <QRCodeOnly id={currentId} size={availableQrSize} />
+        <div
+          ref={qrCodeRef}
+          className="hidden my-10 wide:flex wide:w-2/5 wide:items-center wide:justify-center"
+        >
+          {currentId
+            ? (
+              <div className="h-0">
+                <div className="translate-y-[-50%]">
+                  <QRCodeOnly id={currentId} size={availableQrSize} />
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="w-full h-full max-h-[400px] max-w-[400px] bg-white rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-300">
-              <QrCode size={64} className="mb-3 opacity-50" />
-              <p className="text-base font-medium opacity-75">Waiting for ID...</p>
-            </div>
-          )}
+            )
+            : (
+              <div className="w-full h-full max-h-[400px] max-w-[400px] bg-white rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-300">
+                <QrCode size={64} className="mb-3 opacity-50" />
+                <p className="text-base font-medium opacity-75">
+                  Waiting for ID...
+                </p>
+              </div>
+            )}
         </div>
       </div>
     </div>
