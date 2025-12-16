@@ -1,0 +1,7 @@
+{
+  "name": "iClass QR Generator",
+  "description": "An offline-capable QR code generator for UCAS iClass sign-in. Supports tags, auto-refresh, offline usage, and list sharing.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
