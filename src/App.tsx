@@ -173,7 +173,7 @@ const App: React.FC = () => {
           <div className="mb-6">
             <div className="relative group">
               <input
-                type="text"
+                type="number" min="0" step="1"
                 value={currentId}
                 onChange={handleManualIdChange}
                 placeholder="Enter Course ID"
