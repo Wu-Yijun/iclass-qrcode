@@ -1,20 +1,99 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 清新课堂签到二维码生成器
 
-# Run and deploy your AI Studio app
+## 项目简介
 
-This contains everything you need to run your app locally.
+本项目是一个支持电脑端和手机端自适应、可离线加载的 Web App。它可以根据用户输入的 id，生成 iClass 签到专用格式的二维码，并支持自动刷新、图片保存、扫码识别、标签管理、分享等多种实用功能。
 
-View your app in AI Studio: https://ai.studio/apps/drive/1Wmkr66jGC2KpQxh_66kyxrUBbgR5AJg-
+## 主要功能
 
-## Run Locally
+- **二维码生成**  
+  输入课程 id，自动生成格式为  
+  `https://iclass.ucas.edu.cn:8181/app/course/stu_scan_sign.action?courseSchedId=${id}&timestamp=${时间戳}`  
+  的二维码，纠错级别为 High。二维码每5秒自动刷新一次。
 
-**Prerequisites:**  Node.js
+- **保存二维码图片**  
+  可选择保存当前时间、5秒/10秒/30秒/60秒后的二维码图片到本地。
 
+- **扫码识别 id**  
+  支持通过摄像头扫描二维码自动获取 id，或上传二维码图片自动识别填入。
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+- **id 输入与标签管理**  
+  - 支持手动输入 id，或点击标签快速填入已保存的 id。
+  - 新 id 可保存为标签，便于下次快速选择。
+  - 标签管理界面可添加、编辑、删除标签-id 对，编辑后自动保存。
+
+- **分享功能**  
+  - 主界面可一键生成当前课程的链接，分享后他人打开自动填入 id。
+  - 编辑界面可一键生成链接，分享后他人打开自动导入全部标签-id 记录。
+
+## 使用说明
+
+1. **输入或扫码获取 id**  
+   - 在输入框手动输入课程 id，或点击扫码按钮通过摄像头/上传图片识别二维码自动填入。
+
+2. **选择标签**  
+   - 点击下方标签快速填入已保存的 id。
+
+3. **保存新 id**  
+   - 输入新 id 后，点击“保存”按钮，进入编辑界面填写标签。
+
+4. **管理标签**  
+   - 编辑界面可添加、编辑、删除标签-id 对，所有更改自动保存。
+
+5. **保存二维码图片**  
+   - 选择保存时间（当前/5s/10s/30s/60s后），点击“保存图片”即可下载二维码。
+
+6. **分享**  
+   - 主界面点击“分享”按钮，复制带有 id 的链接。
+   - 编辑界面点击“分享全部”按钮，复制带有全部标签-id 的链接。
+
+## 界面适配与设计
+
+- **横屏模式（宽高比 > 1.33）**  
+  - 页面分为左右两栏，Header 居中在最上方。
+  - 右侧仅显示二维码并居中，左侧为输入框、标签、保存/分享等操作。
+  - “保存图片”卡片始终位于左侧底部。
+  - 元素宽度适当缩小，尽量避免主界面出现纵向滚动。
+  - 横屏下二维码不再显示为悬浮白底大卡片。
+
+- **竖屏/窄屏模式**  
+  - 布局保持单列，所有操作区和二维码依次排列。
+  - 编辑界面中，删除按钮位于每个卡片的右上角，不单独占一行。
+  - 编辑界面卡片的换行临界宽度适当减小，便于在小屏幕下多行显示。
+
+- **通用优化**  
+  - 文本、输入框等元素整体缩小，提升信息密度。
+  - 支持 PWA，可离线加载使用。
+
+## 离线使用
+
+- 支持 PWA，首次访问后可直接“添加到主屏幕”，断网时依然可用。
+
+## 开发与构建
+
+1. 安装依赖  
+   ```bash
+   npm install
+   ```
+
+2. 启动开发环境  
+   ```bash
+   npm run dev
+   ```
+
+3. 构建生产版本  
+   ```bash
+   npm run build
+   ```
+
+## 依赖技术
+
+- React + TypeScript
+- Vite
+- 二维码生成库（如 qrcode.react）
+- 本地存储（localStorage）
+- PWA 支持
+
+## 许可协议
+
+本项目仅供学习与交流使用，禁止用于商业用途。
