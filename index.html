@@ -1,12 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>清新课堂二维码</title>
     <link rel="stylesheet" href="./src/index.css">
-  
-    <link rel="icon" type="image/png" href="/favicon.svg" />
+    <!-- Open Graph meta tags -->
+    <meta property="og:title" content="清新课堂二维码生成器" />
+    <meta property="og:description" content="输入课程 ID 即可生成 iClass 远程签到二维码，支持自动刷新、图片保存、扫码识别、标签管理与分享。响应式设计，支持 PWA 离线使用，适合手机与电脑端高效课堂签到。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://wu-yijun.github.io/iclass-qrcode/" />
+    <meta property="og:image" content="/IClass-QR.jpg" />
+    <meta property="og:site_name" content="清新课堂二维码" />
+    <link rel="icon" type="image/png" href="./favicon.svg" />
   </head>
   <body class="bg-gray-50 text-gray-900 antialiased selection:bg-brand-500 selection:text-white">
     <div id="root" class="h-full w-full"></div>

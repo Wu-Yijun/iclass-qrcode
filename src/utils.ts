@@ -102,3 +102,5 @@ export const scanQRCodeFromFile = (file: File): Promise<string | null> => {
     reader.readAsDataURL(file);
   });
 };
+
+export const HOME_PAGE = "https://github.com/Wu-Yijun/iclass-qrcode";

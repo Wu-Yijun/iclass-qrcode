@@ -36,6 +36,8 @@ const TRANSLATIONS = {
     imported_tags_success_1: "Imported ",
     imported_tags_success_2: " tags successfully.",
     link_copied: "Link copied to clipboard!",
+    jump_to_github: "Jump to my Github Repo",
+    enter_manage_tags: "Go for Manage Tags",
     // EditView
     manage_tags: "Manage Tags",
     share_all: "Share All",
@@ -74,6 +76,8 @@ const TRANSLATIONS = {
     imported_tags_success_1: "成功导入",
     imported_tags_success_2: "个标签。",
     link_copied: "链接已复制到剪贴板！",
+    jump_to_github: "进入我的 Github 主页",
+    enter_manage_tags: "进入标签管理页面",
     // EditView
     manage_tags: "管理标签",
     share_all: "分享全部",

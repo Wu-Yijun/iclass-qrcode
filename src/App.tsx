@@ -8,11 +8,12 @@ import TagList from "./components/TagList";
 import { SavedItem, ViewState } from "./types";
 import {
   decodeShareData,
+  HOME_PAGE,
   loadFromLocalStorage,
   saveToLocalStorage,
   scanQRCodeFromFile,
 } from "./utils";
-import { Languages, Link, QrCode, Save, Settings, Upload } from "lucide-react";
+import { Github, Languages, Link, QrCode, Save, Settings, Upload } from "lucide-react";
 import { useLanguage } from "./contexts/LanguageContext";
 
 const App: React.FC = () => {
@@ -163,16 +164,30 @@ const App: React.FC = () => {
             </div>
           </div>
           {/* Settings button absolute right in wide mode */}
-          <div className="wide:absolute wide:right-4 flex flex-row gap-2">
+          <div className="wide:absolute wide:right-4 flex flex-row gap-1 wide:gap-3">
+            <button
+              onClick={(e) => {
+                if (e.ctrlKey) {
+                  window.open(HOME_PAGE, "_blank");
+                } else {
+                  window.location.href = HOME_PAGE;
+                }
+              }}
+              title={t("jump_to_github")}
+              className="p-2 bg-white text-gray-600 rounded-lg hover:bg-gray-100 border border-gray-200 shadow-sm transition-all active:scale-95"
+            >
+              <Github size={18} />
+            </button>
             <button
               onClick={() => setLanguage(language === "en" ? "zh" : "en")}
+              title={t(language === "en" ? "switch_zh" : "switch_en")}
               className="p-2 bg-white text-gray-600 rounded-lg hover:bg-gray-100 border border-gray-200 shadow-sm transition-all active:scale-95"
             >
               <Languages size={18} />
             </button>
-            {/* Settings button absolute right in wide mode */}
             <button
               onClick={() => setView("EDIT")}
+              title={t("enter_manage_tags")}
               className="p-2 bg-white text-gray-600 rounded-lg hover:bg-gray-100 border border-gray-200 shadow-sm transition-all active:scale-95"
             >
               <Settings size={18} />
