@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { generateUrl } from "../utils";
 import { Clock, Download } from "lucide-react";
+import { useLanguage } from "../contexts/LanguageContext";
 
 interface CommonProps {
   id: string;
@@ -52,6 +53,7 @@ export const SaveActions: React.FC<CommonProps> = ({ id }) => {
     setDownloadOffset,
     setIsDownloading,
   } = useDownloadLogic(id);
+  const { t } = useLanguage();
   const futureUrl = downloadOffset !== null
     ? generateUrl(id, downloadOffset)
     : "";
@@ -66,35 +68,35 @@ export const SaveActions: React.FC<CommonProps> = ({ id }) => {
       <div className="w-full my-5 bg-white p-3 rounded-xl shadow-sm border border-gray-100">
         <h3 className="text-xs font-bold text-gray-600 mb-2 flex items-center uppercase tracking-wide">
           <Download size={12} className="mr-1.5" />
-          Save Image
+          {t("save_image")}
         </h3>
         <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-5">
           <DownloadBtn
-            label="Now"
+            label={t("now")}
             offset={0}
             onClick={handleDownload}
             loading={isDownloading}
           />
           <DownloadBtn
-            label="+5s"
+            label={t("plus_5s")}
             offset={5}
             onClick={handleDownload}
             loading={isDownloading}
           />
           <DownloadBtn
-            label="+10s"
+            label={t("plus_10s")}
             offset={10}
             onClick={handleDownload}
             loading={isDownloading}
           />
           <DownloadBtn
-            label="+30s"
+            label={t("plus_30s")}
             offset={30}
             onClick={handleDownload}
             loading={isDownloading}
           />
           <DownloadBtn
-            label="+60s"
+            label={t("plus_60s")}
             offset={60}
             onClick={handleDownload}
             loading={isDownloading}
@@ -120,6 +122,7 @@ export const QRCodeMinimal: React.FC<CommonProps & { size: number }> = (
   { id, size },
 ) => {
   const [timestamp, setTimestamp] = useState(Date.now());
+  const { t } = useLanguage();
 
   useEffect(() => {
     const interval = setInterval(() => setTimestamp(Date.now()), 5000);
@@ -141,7 +144,7 @@ export const QRCodeMinimal: React.FC<CommonProps & { size: number }> = (
 
       <div className="mt-3 flex items-center space-x-2 text-brand-600 bg-brand-50 px-3 py-1 rounded-full border border-brand-100/50">
         <Clock size={12} className="animate-pulse" />
-        <span className="text-[10px] font-bold">Auto-refreshing (5s)</span>
+        <span className="text-[10px] font-bold">{t("auto_refreshing")}</span>
       </div>
     </div>
   );

@@ -50,7 +50,7 @@ const App: React.FC = () => {
         setItems(merged);
         saveToLocalStorage(merged);
         window.history.replaceState({}, "", window.location.pathname);
-        alert(`Imported ${sharedItems.length} tags successfully.`);
+        alert(t("imported_tags_success_1") + sharedItems.length + t("imported_tags_success_2"));
       }
     }
 
@@ -74,20 +74,6 @@ const App: React.FC = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
-  //     useEffect(() => {
-  //     if (headerRef.current) {
-  //       // 使用 getBoundingClientRect().height 获取元素的实际渲染高度（像素值）
-  //       const headerHeight = headerRef.current.getBoundingClientRect().height;
-
-  //       // 100vh 对应 window.innerHeight
-  //       const h = (windowHeight - headerHeight)*0.95;
-  //       const w = windowWidth * (2 / 5);
-  //       setAvailableQrSize(Math.min(400,h, w));
-  //       console.log("hw",h,w);
-
-  //     }
-  //   }, [windowHeight, windowWidth]); // 依赖项确保在窗口尺寸变化时重新计算
 
   const handleUpdateItems = (newItems: SavedItem[]) => {
     setItems(newItems);
@@ -142,7 +128,7 @@ const App: React.FC = () => {
     const url =
       `${window.location.origin}${window.location.pathname}?id=${currentId}`;
     navigator.clipboard.writeText(url).then(() => {
-      alert("Link copied to clipboard!");
+      alert(t("link_copied"));
     });
   };
 
@@ -208,14 +194,14 @@ const App: React.FC = () => {
                 pattern="[0-9]*"
                 value={currentId}
                 onChange={handleManualIdChange}
-                placeholder="Enter Course ID"
+                placeholder={t("input_placeholder")}
                 className="w-full pl-3 pr-24 py-3 bg-white border border-gray-200 rounded-xl shadow-sm focus:ring-4 focus:ring-brand-100 focus:border-brand-500 outline-none text-base font-mono transition-all"
               />
               <div className="absolute right-1.5 top-1.5 bottom-1.5 flex items-center space-x-1">
                 <button
                   onClick={triggerFileUpload}
                   className="p-1.5 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-md transition-colors"
-                  title="Upload QR Image"
+                  title={t("upload_qr")}
                 >
                   <Upload size={18} />
                 </button>
@@ -223,7 +209,7 @@ const App: React.FC = () => {
                   <button
                     onClick={shareCurrentId}
                     className="p-1.5 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-md transition-colors"
-                    title="Share Link"
+                    title={t("share_link")}
                   >
                     <Link size={18} />
                   </button>
@@ -235,13 +221,13 @@ const App: React.FC = () => {
             <div className="flex justify-between items-center">
               {currentId && !items.find((i) => i.id === currentId) &&
                 !showSavePrompt && (
-                <button
-                  onClick={saveCurrentId}
-                  className="text-xs font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1 bg-brand-50 px-2.5 py-1 rounded-full transition-colors"
-                >
-                  <Save size={12} /> Save ID
-                </button>
-              )}
+                  <button
+                    onClick={saveCurrentId}
+                    className="text-xs font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1 bg-brand-50 px-2.5 py-1 rounded-full transition-colors"
+                  >
+                    <Save size={12} /> {t("save_id")}
+                  </button>
+                )}
               <input
                 type="file"
                 ref={fileInputRef}
@@ -257,7 +243,7 @@ const App: React.FC = () => {
                 <input
                   type="text"
                   autoFocus
-                  placeholder="Tag Name"
+                  placeholder={t("tag_name_placeholder")}
                   value={tempLabel}
                   onChange={(e) => setTempLabel(e.target.value)}
                   className="flex-1 text-sm outline-none border-none p-1"
@@ -289,7 +275,7 @@ const App: React.FC = () => {
               : (
                 <div className="flex-1 flex flex-col items-center justify-center text-gray-400 opacity-50 mb-12 py-12">
                   <QrCode size={64} className="mb-4 text-gray-300" />
-                  <p className="text-sm">Enter an ID to generate</p>
+                  <p className="text-sm">{t("enter_id_to_generate")}</p>
                 </div>
               )}
           </div>
@@ -319,7 +305,7 @@ const App: React.FC = () => {
               <div className="w-full h-full max-h-[400px] max-w-[400px] bg-white rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-300">
                 <QrCode size={64} className="mb-3 opacity-50" />
                 <p className="text-base font-medium opacity-75">
-                  Waiting for ID...
+                  {t("waiting_for_id")}
                 </p>
               </div>
             )}

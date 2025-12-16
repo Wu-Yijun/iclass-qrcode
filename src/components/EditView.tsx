@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLanguage } from "../contexts/LanguageContext";
 import { SavedItem } from "../types";
 import { ArrowLeft, Plus, Share2, Trash2 } from "lucide-react";
 import { encodeShareData } from "../utils";
@@ -11,6 +12,7 @@ interface EditViewProps {
 
 const EditView: React.FC<EditViewProps> = ({ items, onUpdate, onBack }) => {
   const [localItems, setLocalItems] = useState<SavedItem[]>(items);
+  const { t } = useLanguage();
   const [newItemId, setNewItemId_raw] = useState("");
   const [newItemLabel, setNewItemLabel] = useState("");
   const setNewItemId = (id: string) =>
@@ -51,7 +53,7 @@ const EditView: React.FC<EditViewProps> = ({ items, onUpdate, onBack }) => {
     const url =
       `${window.location.origin}${window.location.pathname}?share=${shareStr}`;
     navigator.clipboard.writeText(url).then(() => {
-      alert("Share link copied to clipboard!");
+      alert(t("share_all_copied"));
     });
   };
 
@@ -64,32 +66,32 @@ const EditView: React.FC<EditViewProps> = ({ items, onUpdate, onBack }) => {
         >
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-lg font-bold text-gray-900">Manage Tags</h1>
+        <h1 className="text-lg font-bold text-gray-900">{t("manage_tags")}</h1>
         <button
           onClick={handleShareAll}
           className="p-2 text-brand-600 hover:text-brand-700 bg-brand-50 hover:bg-brand-100 rounded-lg flex items-center gap-2 text-xs font-bold uppercase tracking-wide"
         >
           <Share2 size={16} />
-          <span className="hidden sm:inline">Share All</span>
+          <span className="hidden sm:inline">{t("share_all")}</span>
         </button>
       </div>
 
       {/* Add New */}
       <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-200 mb-5">
         <h3 className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wide">
-          Add New Tag
+          {t("add_new_tag")}
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
           <input
             type="text"
-            placeholder="Tag Name"
+            placeholder={t("tag_name_placeholder")}
             className="sm:col-span-4 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-xs"
             value={newItemLabel}
             onChange={(e) => setNewItemLabel(e.target.value)}
           />
           <input
             type="text"
-            placeholder="Course ID"
+            placeholder={t("course_id_placeholder")}
             className="sm:col-span-6 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-xs font-mono"
             value={newItemId}
             onChange={(e) => setNewItemId(e.target.value)}
@@ -108,7 +110,7 @@ const EditView: React.FC<EditViewProps> = ({ items, onUpdate, onBack }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {localItems.length === 0 && (
           <div className="col-span-full text-center py-10 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200 text-sm">
-            No saved tags. Add one above.
+            {t("no_saved_tags")}
           </div>
         )}
         {localItems.map((item, idx) => (
@@ -118,7 +120,7 @@ const EditView: React.FC<EditViewProps> = ({ items, onUpdate, onBack }) => {
           >
             <div className="w-full">
               <label className="text-[10px] text-gray-400 block mb-0.5 uppercase tracking-wider">
-                Label
+                {t("label")}
               </label>
               <input
                 type="text"
@@ -129,7 +131,7 @@ const EditView: React.FC<EditViewProps> = ({ items, onUpdate, onBack }) => {
             </div>
             <div className="w-full">
               <label className="text-[10px] text-gray-400 block mb-0.5 uppercase tracking-wider">
-                ID
+                {t("id")}
               </label>
               <input
                 type="text"
