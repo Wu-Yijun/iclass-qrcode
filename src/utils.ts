@@ -1,5 +1,5 @@
 import { SavedItem, ShareData } from "./types";
-import jsQR from "jsqr";
+import QrScanner from 'qr-scanner';
 
 export const generateUrl = (id: string, offsetSeconds: number = 0): string => {
   const timestamp = Date.now() + offsetSeconds * 1000;
@@ -67,40 +67,17 @@ export const decodeShareData = (str: string): SavedItem[] => {
   }
 };
 
-export const scanQRCodeFromFile = (file: File): Promise<string | null> => {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) {
-          resolve(null);
-          return;
-        }
-        ctx.drawImage(img, 0, 0);
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const code = jsQR(imageData.data, imageData.width, imageData.height);
-        if (code) {
-          // Attempt to extract ID from URL if it matches pattern, otherwise return raw text
-          try {
-            const url = new URL(code.data);
-            const id = url.searchParams.get("courseSchedId");
-            resolve(id || code.data);
-          } catch {
-            resolve(code.data);
-          }
-        } else {
-          resolve(null);
-        }
-      };
-      img.src = e.target?.result as string;
-    };
-    reader.readAsDataURL(file);
-  });
+export const scanQRCodeFromFile = async (file: File): Promise<string | null> => {
+  try {
+    const res = await QrScanner.scanImage(file, { returnDetailedScanResult: true });
+    console.log(res);
+    const url = new URL(res.data);
+    const id = url.searchParams.get("courseSchedId");
+    return id;
+  } catch(e) {
+    console.error("QR scan failed", e);
+    return null;
+  }
 };
 
 export const HOME_PAGE = "https://github.com/Wu-Yijun/iclass-qrcode";
