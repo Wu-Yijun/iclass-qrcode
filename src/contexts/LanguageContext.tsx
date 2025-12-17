@@ -23,6 +23,7 @@ const TRANSLATIONS = {
     switch_zh: "Switch to Chinese",
     // App Main
     input_placeholder: "Enter Course ID",
+    camera_cap: "Open Camera to Capture",
     upload_qr: "Upload QR Image",
     share_link: "Share Link",
     save_id: "Save ID",
@@ -63,6 +64,7 @@ const TRANSLATIONS = {
     switch_zh: "切换至中文",
     // App Main
     input_placeholder: "请输入课程ID",
+    camera_cap: "从相机拍摄",
     upload_qr: "上传二维码图片",
     share_link: "分享链接",
     save_id: "保存ID",

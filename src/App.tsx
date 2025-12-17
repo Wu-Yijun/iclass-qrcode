@@ -14,7 +14,7 @@ import {
   saveToLocalStorage,
   scanQRCodeFromFile,
 } from "./utils";
-import { Github, Languages, Link, QrCode, Save, Settings, Upload } from "lucide-react";
+import { Camera, Github, Languages, Link, QrCode, Save, Settings, Upload } from "lucide-react";
 import { useLanguage } from "./contexts/LanguageContext";
 
 const App: React.FC = () => {
@@ -25,6 +25,7 @@ const App: React.FC = () => {
   const [tempLabel, setTempLabel] = useState("");
   const [showSavePrompt, setShowSavePrompt] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraCaptureRef = useRef<HTMLInputElement>(null);
 
   const [availableQrSize, setAvailableQrSize] = useState(220);
   const qrCodeRef = useRef<HTMLDivElement>(null);
@@ -97,6 +98,10 @@ const App: React.FC = () => {
     }
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
+
+  const triggerCameraCapture = ()=>{
+    cameraCaptureRef.current?.click();
+  }
 
   const triggerFileUpload = () => {
     fileInputRef.current?.click();
@@ -214,6 +219,13 @@ const App: React.FC = () => {
               />
               <div className="absolute right-1.5 top-1.5 bottom-1.5 flex items-center space-x-1">
                 <button
+                  onClick={triggerCameraCapture}
+                  className="p-1.5 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-md transition-colors"
+                  title={t("camera_cap")}
+                >
+                  <Camera size={18} />
+                </button>
+                <button
                   onClick={triggerFileUpload}
                   className="p-1.5 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-md transition-colors"
                   title={t("upload_qr")}
@@ -249,6 +261,14 @@ const App: React.FC = () => {
                 className="hidden"
                 accept="image/*"
                 onChange={handleFileUpload}
+              />
+              {/* capture="environment" 强制调用后置摄像头，capture="user" 调用前置 */}
+              <input 
+                type="file"
+                ref={cameraCaptureRef} 
+                accept="image/*" 
+                capture="environment" 
+                onChange={handleFileUpload} 
               />
             </div>
 
