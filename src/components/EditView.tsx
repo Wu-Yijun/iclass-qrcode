@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useLanguage } from "../contexts/LanguageContext";
 import { SavedItem } from "../types";
 import { ArrowLeft, Plus, Share2, Trash2 } from "lucide-react";
-import { encodeShareData } from "../utils";
+import { encodeShareData, trimId } from "../utils";
 
 interface EditViewProps {
   items: SavedItem[];
@@ -16,7 +16,7 @@ const EditView: React.FC<EditViewProps> = ({ items, onUpdate, onBack }) => {
   const [newItemId, setNewItemId_raw] = useState("");
   const [newItemLabel, setNewItemLabel] = useState("");
   const setNewItemId = (id: string) =>
-    setNewItemId_raw(id.replaceAll(/[^0-9]/g, ""));
+    setNewItemId_raw(trimId(id));
 
   const handleDelete = (index: number) => {
     const updated = localItems.filter((_, i) => i !== index);
@@ -42,7 +42,7 @@ const EditView: React.FC<EditViewProps> = ({ items, onUpdate, onBack }) => {
     const updated = [...localItems];
     updated[index] = {
       ...updated[index],
-      [field]: field === "id" ? value.replaceAll(/[^0-9]/g, "") : value,
+      [field]: field === "id" ? trimId(value) : value,
     };
     setLocalItems(updated);
     onUpdate(updated);

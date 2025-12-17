@@ -3,7 +3,20 @@ import QrScanner from 'qr-scanner';
 
 export const generateUrl = (id: string, offsetSeconds: number = 0): string => {
   const timestamp = Date.now() + offsetSeconds * 1000;
-  return `https://iclass.ucas.edu.cn:8181/app/course/stu_scan_sign.action?courseSchedId=${id}&timestamp=${timestamp}`;
+  const uuidRegex = /^[0-9A-F]{32}$/i;
+  if (uuidRegex.test(id)) {
+    const url = new URL("http://124.16.75.106:8081/");
+    url.pathname = "/app/course/stu_scan_sign.action";
+    url.searchParams.set("timeTableId", id);
+    url.searchParams.set("timestamp", timestamp.toString());
+    return url.toString();
+  } else {
+    const url = new URL("https://iclass.ucas.edu.cn:8181/");
+    url.pathname = "/app/course/stu_scan_sign.action";
+    url.searchParams.set("courseSchedId", id);
+    url.searchParams.set("timestamp", timestamp.toString());
+    return url.toString();
+  }
 };
 
 export const saveToLocalStorage = (items: SavedItem[]) => {
@@ -57,7 +70,7 @@ export const decodeShareData = (str: string): SavedItem[] => {
       ) {
         throw new Error("Invalid item format");
       }
-      item.id = item.id.replaceAll(/[^0-9]/g, "");
+      item.id = trimId(item.id);
       item.label = item.label.trim();
     });
     return data.items.filter((item) => item.id !== "" && item.label !== "");
@@ -73,11 +86,30 @@ export const scanQRCodeFromFile = async (file: File): Promise<string | null> => 
     console.log(res);
     const url = new URL(res.data);
     const id = url.searchParams.get("courseSchedId");
+    if (id === null) {
+      const timeTableId = url.searchParams.get("timeTableId");
+      if (timeTableId !== null) {
+        return timeTableId;
+      }
+      return null;
+    }
     return id;
-  } catch(e) {
+  } catch (e) {
     console.error("QR scan failed", e);
     return null;
   }
 };
+
+
+export const trimId = (id: string): string => {
+  id = id.trim().toUpperCase();
+  const uuidRegex = /^[0-9A-F]{32}$/i;
+  if (uuidRegex.test(id)) {
+    return id;
+  } else {
+    return id.replaceAll(/[^0-9]/g, "");
+  }
+}
+
 
 export const HOME_PAGE = "https://github.com/Wu-Yijun/iclass-qrcode";

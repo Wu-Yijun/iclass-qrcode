@@ -9,6 +9,7 @@ import { SavedItem, ViewState } from "./types";
 import {
   decodeShareData,
   HOME_PAGE,
+  trimId,
   loadFromLocalStorage,
   saveToLocalStorage,
   scanQRCodeFromFile,
@@ -19,8 +20,7 @@ import { useLanguage } from "./contexts/LanguageContext";
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>("MAIN");
   const [currentId, setCurrentId_raw] = useState<string>("");
-  const setCurrentId = (id: string) =>
-    setCurrentId_raw(id.replaceAll(/[^0-9]/g, ""));
+  const setCurrentId = (id: string) => setCurrentId_raw(trimId(id));
   const [items, setItems] = useState<SavedItem[]>([]);
   const [tempLabel, setTempLabel] = useState("");
   const [showSavePrompt, setShowSavePrompt] = useState(false);
