@@ -1,10 +1,14 @@
 import { SavedItem, ShareData } from "./types";
 import QrScanner from 'qr-scanner';
 
+export const isUUID = (id: string): boolean => {
+  const uuidRegex = /^[0-9A-F]{32}$/i;
+  return uuidRegex.test(id);
+}
+
 export const generateUrl = (id: string, offsetSeconds: number = 0): string => {
   const timestamp = Date.now() + offsetSeconds * 1000;
-  const uuidRegex = /^[0-9A-F]{32}$/i;
-  if (uuidRegex.test(id)) {
+  if (isUUID(id)) {
     const url = new URL("http://124.16.75.106:8081/");
     url.pathname = "/app/course/stu_scan_sign.action";
     url.searchParams.set("timeTableId", id);

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
-import { generateUrl } from "../utils";
+import { generateUrl, isUUID } from "../utils";
 import { Clock, Download } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
 
@@ -57,6 +57,7 @@ export const SaveActions: React.FC<CommonProps> = ({ id }) => {
   const futureUrl = downloadOffset !== null
     ? generateUrl(id, downloadOffset)
     : "";
+  const quality = isUUID(id) ? "Q" : "H";
 
   const handleDownload = (offset: number) => {
     setDownloadOffset(offset);
@@ -109,8 +110,7 @@ export const SaveActions: React.FC<CommonProps> = ({ id }) => {
           <QRCodeCanvas
             value={futureUrl}
             size={500}
-            level={"H"}
-            includeMargin={true}
+            level={quality}
           />
         )}
       </div>
@@ -130,6 +130,7 @@ export const QRCodeMinimal: React.FC<CommonProps & { size: number }> = (
   }, []);
 
   const currentUrl = generateUrl(id, 0);
+  const quality = isUUID(id)?"Q":"H";
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -138,7 +139,7 @@ export const QRCodeMinimal: React.FC<CommonProps & { size: number }> = (
         <QRCodeCanvas
           value={currentUrl}
           size={size}
-          level={"H"}
+          level={quality}
         />
       </div>
 
